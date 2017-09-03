@@ -14,7 +14,7 @@ class Homestead
 
         # Configure The Box
         config.vm.define settings["name"] ||= "enterprise-homestead"
-        config.vm.box = settings["box"] ||= "enterprisehomestead"
+        config.vm.box = settings["box"] ||= "svpernova09/enterprise-homestead"
         # config.vm.box_version = settings["version"] ||= ">= 3.0.0"
         config.vm.hostname = settings["hostname"] ||= "homestead"
 
