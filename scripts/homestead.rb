@@ -14,7 +14,7 @@ class Homestead
 
         # Configure The Box
         config.vm.define settings["name"] ||= "enterprise-homestead"
-        config.vm.box = settings["box"] ||= "enterprise"
+        config.vm.box = settings["box"] ||= "enterprisehomestead"
         # config.vm.box_version = settings["version"] ||= ">= 3.0.0"
         config.vm.hostname = settings["hostname"] ||= "homestead"
 
@@ -295,15 +295,15 @@ class Homestead
 
         if settings.has_key?("variables")
             settings["variables"].each do |var|
-                config.vm.provision "shell" do |s|
-                    s.inline = "echo \"\nenv[$1] = '$2'\" >> /etc/opt/remi/php56/php-fpm.conf"
-                    s.args = [var["key"], var["value"]]
-                end
-
-                config.vm.provision "shell" do |s|
-                    s.inline = "echo \"\nenv[$1] = '$2'\" >> /etc/opt/remi/php70/php-fpm.conf"
-                    s.args = [var["key"], var["value"]]
-                end
+                # config.vm.provision "shell" do |s|
+                #     s.inline = "echo \"\nenv[$1] = '$2'\" >> /etc/opt/remi/php56/php-fpm.conf"
+                #     s.args = [var["key"], var["value"]]
+                # end
+                #
+                # config.vm.provision "shell" do |s|
+                #     s.inline = "echo \"\nenv[$1] = '$2'\" >> /etc/opt/remi/php70/php-fpm.conf"
+                #     s.args = [var["key"], var["value"]]
+                # end
 
                 config.vm.provision "shell" do |s|
                     s.inline = "echo \"\nenv[$1] = '$2'\" >> /etc/opt/remi/php71/php-fpm.conf"
@@ -324,7 +324,7 @@ class Homestead
         # Update Composer On Every Provision
         config.vm.provision "shell" do |s|
             s.name = "Update Composer"
-            s.inline = "sudo /usr/local/bin/composer self-update && sudo chown -R vagrant:vagrant /home/vagrant/.composer/"
+            s.inline = "sudo /usr/local/bin/composer self-update && sudo chown -R vagrant:vagrant /home/vagrant/.config/composer/"
             s.privileged = false
         end
 

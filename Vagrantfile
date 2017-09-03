@@ -22,6 +22,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         config.vm.provision "shell" do |s|
             s.inline = "awk '{ sub(\"\r$\", \"\"); print }' /tmp/bash_aliases > /home/vagrant/.bash_aliases"
         end
+        config.vm.provision "shell" do |s|
+            s.inline = 'cat /home/vagrant/.bashrc /home/vagrant/.bash_aliases > /tmp/.bashrc && mv /tmp/.bashrc /home/vagrant/.bashrc'
+        end
+        config.vm.provision "shell" do |s|
+            s.inline = 'chown vagrant:vagrant /home/vagrant/.bash_aliases'
+        end
+        config.vm.provision "shell" do |s|
+            s.inline = 'chown vagrant:vagrant /home/vagrant/.bashrc'
+        end
+        config.vm.provision "shell" do |s|
+            s.inline = 'chown vagrant:vagrant /home/vagrant/.my.cnf'
+        end
     end
 
     if File.exist? homesteadYamlPath then
