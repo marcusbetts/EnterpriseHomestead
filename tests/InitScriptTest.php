@@ -25,7 +25,7 @@ class InitScriptTest extends TestCase
     {
         $output = exec('bash init.sh');
 
-        $this->assertEquals('Homestead initialized!', $output);
+        $this->assertEquals('Homestead Enterprise initialized!', $output);
     }
 
     /** @test */
