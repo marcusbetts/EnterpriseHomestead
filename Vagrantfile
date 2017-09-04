@@ -31,9 +31,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         config.vm.provision "shell" do |s|
             s.inline = 'chown vagrant:vagrant /home/vagrant/.bashrc'
         end
-        config.vm.provision "shell" do |s|
-            s.inline = 'chown vagrant:vagrant /home/vagrant/.my.cnf'
-        end
     end
 
     if File.exist? homesteadYamlPath then
