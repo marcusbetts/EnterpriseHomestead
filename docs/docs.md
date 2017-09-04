@@ -23,3 +23,8 @@ title: Documentation
 
 Since Enterprise Homestead is built from Laravel Homestead the documentation will be similar in some areas:
 
+* [Configuring Homestead](https://laravel.com/docs/5.5/homestead#configuring-homestead)
+* [Launching The Vagrant Box](https://laravel.com/docs/5.5/homestead#launching-the-vagrant-box)
+* [Per Project Installation](https://laravel.com/docs/5.5/homestead#per-project-installation)
+* [Connecting Via SSH](https://laravel.com/docs/5.5/homestead#connecting-via-ssh)
+* [Connecting To Databases](https://laravel.com/docs/5.5/homestead#connecting-to-databases)
