@@ -2,6 +2,11 @@
 layout: default
 title: Frequently Asked Questions (FAQs)
 ---
+<ul class="nav">
+    <li><a href="/">Home</a></li>
+    <li><a href="/frequently-asked-questions">FAQs</a></li>
+    <li><a href="/docs">Documentation</a></li>
+</ul>
 
 ## Frequently Asked Questions
 
@@ -19,7 +24,11 @@ A: Unfortunately no. I am dedicated to get a basic functional and stable version
 
 ### Q: How do I get support?
 
-A: If you have a simple question, hop in [#enterprisehomestead on the Freenode IRC network](https://webchat.freenode.net/?channels=#enterprisehomestead). If you have a larger question open a [Github Issue](https://github.com/svpernova09/enterprisehomestead)
+A: If you have a simple question, hop in [#enterprisehomestead on the Freenode IRC network](https://webchat.freenode.net/?channels=#enterprisehomestead). If you have a larger question open a [Github Issue](https://github.com/svpernova09/enterprisehomestead).
+
+### Q: How can I help?
+
+A: _Now_ you're speaking our language. Check out [our issues](https://github.com/svpernova09/enterprisehomestead/issues) and see if you can easily recreate them and help debug. If you'd like to contribute features/code please for the repository and open pull requests.
 
 ### Q: Don't you work on Laravel Homestead?
 
