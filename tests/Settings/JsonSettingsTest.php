@@ -16,7 +16,7 @@ class JsonSettingsTest extends TestCase
         $settings = JsonSettings::fromFile(__DIR__.'/../../resources/Homestead.json');
 
         $attributes = $settings->toArray();
-        $this->assertEquals('192.168.10.10', $attributes['ip']);
+        $this->assertEquals('192.168.20.20', $attributes['ip']);
         $this->assertEquals('2048', $attributes['memory']);
         $this->assertEquals(1, $attributes['cpus']);
     }
@@ -25,7 +25,7 @@ class JsonSettingsTest extends TestCase
     public function it_can_be_saved_to_a_file()
     {
         $settings = new JsonSettings([
-            'ip' => '192.168.10.10',
+            'ip' => '192.168.20.20',
             'memory' => '2048',
             'cpus' => 1,
         ]);
@@ -35,7 +35,7 @@ class JsonSettingsTest extends TestCase
 
         $this->assertTrue(file_exists($filename));
         $attributes = json_decode(file_get_contents($filename), true);
-        $this->assertEquals('192.168.10.10', $attributes['ip']);
+        $this->assertEquals('192.168.20.20', $attributes['ip']);
         $this->assertEquals('2048', $attributes['memory']);
         $this->assertEquals(1, $attributes['cpus']);
     }
@@ -44,7 +44,7 @@ class JsonSettingsTest extends TestCase
     public function it_can_update_its_attributes()
     {
         $settings = new JsonSettings([
-            'ip' => '192.168.10.10',
+            'ip' => '192.168.20.20',
             'memory' => '2048',
             'cpus' => 1,
         ]);
@@ -65,7 +65,7 @@ class JsonSettingsTest extends TestCase
     public function it_updates_only_not_null_attributes()
     {
         $settings = new JsonSettings([
-            'ip' => '192.168.10.10',
+            'ip' => '192.168.20.20',
             'memory' => '2048',
             'cpus' => 1,
         ]);
@@ -77,7 +77,7 @@ class JsonSettingsTest extends TestCase
         ]);
 
         $attributes = $settings->toArray();
-        $this->assertEquals('192.168.10.10', $attributes['ip']);
+        $this->assertEquals('192.168.20.20', $attributes['ip']);
         $this->assertEquals('2048', $attributes['memory']);
         $this->assertEquals(1, $attributes['cpus']);
     }
