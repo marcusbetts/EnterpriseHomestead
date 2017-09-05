@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
-export DEBIAN_FRONTEND=noninteractive
-# Check If Maria Has Been Installed
-
-if [ -f /home/vagrant/.maria ]
+# Check If MariaDB Has Been Installed
+MariaDBInstalled=$(yum info MariaDB-server | grep Repo | awk '{ print $3 }')
+if [ ${MariaDBInstalled} == 'installed' ]
 then
     echo "MariaDB already installed."
     exit 0
@@ -10,54 +9,59 @@ fi
 
 touch /home/vagrant/.maria
 
-# Disable Apparmor
-# See https://github.com/laravel/homestead/issues/629#issue-247524528
-
-sudo service apparmor stop
-sudo service apparmor teardown
-sudo update-rc.d -f apparmor remove
-
 # Remove MySQL
-
-apt-get remove -y --purge mysql-server mysql-client mysql-common
-apt-get autoremove -y
-apt-get autoclean
+yum erase -y -q mysql-community-client mysql-community-common mysql-community-libs mysql-community-libs-compat mysql-community-server mysql57-community-release
 
 rm -rf /var/lib/mysql
-rm -rf /var/log/mysql
-rm -rf /etc/mysql
+rm -rf /var/lib/mysql-files
+rm -rf /var/lib/mysql-keyring
+rm -rf /var/log/mysqld.log
+rm -rf /etc/my.cnf
+rm -rf /etc/my.cnf.d
+rm -rf /home/vagrant/.my.cnf
+rm -rf /home/vagrant/.mysql_history
+echo "MySQL uninstalled."
 
-# Add Maria PPA
+# Add MariaDB GPG Key
+rpm --import https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
 
-sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8
-sudo add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.1/ubuntu xenial main'
-apt-get update
+# Add MariaDB YUM Repository
+touch /etc/yum.repos.d/MariaDB.repo
 
-# Set The Automated Root Password
-
-export DEBIAN_FRONTEND=noninteractive
-
-debconf-set-selections <<< "mariadb-server-10.1 mysql-server/data-dir select ''"
-debconf-set-selections <<< "mariadb-server-10.1 mysql-server/root_password password secret"
-debconf-set-selections <<< "mariadb-server-10.1 mysql-server/root_password_again password secret"
+echo '# MariaDB 10.2 CentOS repository list - created 2017-09-04 03:34 UTC
+# http://downloads.mariadb.org/mariadb/repositories/
+[mariadb]
+name = MariaDB
+baseurl = http://yum.mariadb.org/10.2/centos7-amd64
+gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgcheck=1' >> /etc/yum.repos.d/MariaDB.repo
+echo "MariaDB YUM Repository installed."
 
 # Install MariaDB
+yum -y -q install MariaDB-server MariaDB-client
+echo "MariaDB installed."
 
-apt-get install -y mariadb-server
+# Start MariaDB & Set auto-start on system boot
+systemctl start mariadb.service
+systemctl enable mariadb.service
+echo "MariaDB started & auto-start on system boot set."
 
-# Configure Password Expiration
+# Configure and Secure MariaDB
+mysql --user=root <<_EOF_
+UPDATE mysql.user SET Password=PASSWORD('secret') WHERE User='root';
+DELETE FROM mysql.user WHERE User='';
+DROP DATABASE IF EXISTS test;
+DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
+FLUSH PRIVILEGES;
+_EOF_
+systemctl restart mariadb.service
+echo "MariaDB Configured and Secured."
 
-echo "default_password_lifetime = 0" >> /etc/mysql/my.cnf
-
-# Configure Maria Remote Access
-
-sed -i '/^bind-address/s/bind-address.*=.*/bind-address = 0.0.0.0/' /etc/mysql/my.cnf
-
-mysql --user="root" --password="secret" -e "GRANT ALL ON *.* TO root@'0.0.0.0' IDENTIFIED BY 'secret' WITH GRANT OPTION;"
-service mysql restart
-
-mysql --user="root" --password="secret" -e "CREATE USER 'homestead'@'0.0.0.0' IDENTIFIED BY 'secret';"
-mysql --user="root" --password="secret" -e "GRANT ALL ON *.* TO 'homestead'@'0.0.0.0' IDENTIFIED BY 'secret' WITH GRANT OPTION;"
-mysql --user="root" --password="secret" -e "GRANT ALL ON *.* TO 'homestead'@'%' IDENTIFIED BY 'secret' WITH GRANT OPTION;"
-mysql --user="root" --password="secret" -e "FLUSH PRIVILEGES;"
-service mysql restart
+# Configure MariaDB Remote Access
+sudo mysql --user=root --password='secret' -e "GRANT ALL ON *.* TO root@'0.0.0.0' IDENTIFIED BY 'secret' WITH GRANT OPTION;"
+sudo mysql --user=root --password='secret' -e "CREATE USER 'homestead'@'0.0.0.0' IDENTIFIED BY 'secret';"
+sudo mysql --user=root --password='secret' -e "GRANT ALL ON *.* TO 'homestead'@'0.0.0.0' IDENTIFIED BY 'secret' WITH GRANT OPTION;"
+sudo mysql --user=root --password='secret' -e "GRANT ALL ON *.* TO 'homestead'@'%' IDENTIFIED BY 'secret' WITH GRANT OPTION;"
+sudo mysql --user=root --password='secret' -e "FLUSH PRIVILEGES;"
+systemctl restart mariadb.service
+echo "MariaDB Remote Access Configured."
